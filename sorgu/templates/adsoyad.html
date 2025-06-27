@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>/adsoyad Sorgu - Nebi & Mosco Panel</title>
+  <style>
+    /* Genel ayarlar */
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      min-height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      color: #00ff00;
+      margin-bottom: 8px;
+      user-select: none;
+    }
+    .anasayfa-link {
+      color: #00ff00;
+      font-weight: bold;
+      text-decoration: none;
+      margin-bottom: 15px;
+      display: inline-block;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
+    .anasayfa-link:hover {
+      text-decoration: underline;
+      color: #00dd00;
+    }
+    p {
+      margin: 0 0 20px 0;
+      font-size: 0.95rem;
+      max-width: 600px;
+      text-align: center;
+      color: #ccc;
+    }
+    code {
+      background-color: #111;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    /* Form stili */
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      max-width: 600px;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+    input[type="text"] {
+      flex: 1 1 45%;
+      min-width: 140px;
+      padding: 12px 15px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      outline: none;
+      background-color: #222;
+      color: #eee;
+      transition: background-color 0.3s ease;
+    }
+    input[type="text"]:focus {
+      background-color: #333;
+    }
+    button {
+      flex: 1 1 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background-color: #00ff00;
+      color: #000;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    button:hover {
+      background-color: #00dd00;
+    }
+
+    /* Sonuç kutusu */
+    .sonuc {
+      background-color: #111;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #00ff00;
+      white-space: pre-wrap;
+      max-width: 600px;
+      width: 90%;
+      font-family: monospace;
+      user-select: text;
+      color: #0f0;
+    }
+    /* Hata veya bilgi mesajları için kırmızı renk */
+    .sonuc.bulunamadi {
+      color: #ff4444;
+      box-shadow: 0 0 15px #ff4444;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 /adsoyad</h1>
+  <a href="/" class="anasayfa-link">🏠 Anasayfaya Dön</a>
+  <p>Adı, Soyadı, İl ve İlçe sorgular.<br />Örnek: <code>Mesut Ergin İstanbul Bağcılar</code></p>
+
+  <form method="POST">
+    <input type="text" name="ad" placeholder="Ad" required value="{{ request.form.ad or '' }}" />
+    <input type="text" name="soyad" placeholder="Soyad" required value="{{ request.form.soyad or '' }}" />
+    <input type="text" name="il" placeholder="İl (opsiyonel)" value="{{ request.form.il or '' }}" />
+    <input type="text" name="ilce" placeholder="İlçe (opsiyonel)" value="{{ request.form.ilce or '' }}" />
+    <button type="submit">Sorgula</button>
+  </form>
+
+  {% if sonuc %}
+    <div class="sonuc {% if 'bulunamadı' in sonuc|lower %}bulunamadi{% endif %}">
+      <strong>Sonuç:</strong><br>
+      {{ sonuc }}
+    </div>
+  {% endif %}
+</body>
+</html>

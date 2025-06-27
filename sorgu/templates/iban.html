@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>IBAN Sorgu</title>
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 30px;
+    }
+    input, button {
+      width: 300px;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    input {
+      background-color: #222;
+      color: white;
+    }
+    button {
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+    pre {
+      background-color: #222;
+      padding: 15px;
+      border-radius: 6px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h1>IBAN Sorgulama</h1>
+  <form method="POST">
+    <input type="text" name="iban" placeholder="TRxx xxxx xxxx xxxx xxxx xx" required />
+    <button type="submit">Sorgula</button>
+  </form>
+
+  {% if sonuc %}
+    <h3>Sonuç:</h3>
+    <pre>{{ sonuc }}</pre>
+  {% endif %}
+</body>
+</html>

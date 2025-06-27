@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>VIP Kayıt Paneli</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Orbitron', sans-serif;
+      background: linear-gradient(135deg, #0a0a0a, #1f1f1f);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+
+    .register-box {
+      background: rgba(20, 20, 20, 0.9);
+      border: 2px solid gold;
+      border-radius: 15px;
+      padding: 40px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 30px gold;
+      animation: fadeIn 1s ease;
+    }
+
+    .register-box h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 24px;
+      color: gold;
+      text-shadow: 0 0 10px gold;
+    }
+
+    .register-box input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      background-color: #333;
+      color: white;
+      font-size: 15px;
+    }
+
+    .register-box input::placeholder {
+      color: #aaa;
+    }
+
+    .register-box button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(90deg, gold, orange);
+      border: none;
+      border-radius: 8px;
+      color: #000;
+      font-weight: bold;
+      font-size: 16px;
+      margin-top: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 0 15px gold;
+    }
+
+    .register-box button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px gold;
+    }
+
+    .register-box a {
+      display: block;
+      margin-top: 15px;
+      text-align: center;
+      color: #ccc;
+      font-size: 14px;
+      text-decoration: none;
+    }
+
+    .register-box a:hover {
+      color: gold;
+      text-shadow: 0 0 5px gold;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 480px) {
+      .register-box {
+        padding: 25px;
+      }
+
+      .register-box h2 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="register-box">
+    <h2>✨ VIP Kayıt Paneli</h2>
+    <form action="/kayit" method="POST">
+      <input type="text" name="kullanici" placeholder="Kullanıcı Adı" required>
+      <input type="password" name="sifre" placeholder="Şifre" required>
+      <button type="submit">💎 Kayıt Ol</button>
+    </form>
+    <a href="/giris">Zaten hesabın var mı? <strong>Giriş yap</strong></a>
+  </div>
+</body>
+</html>

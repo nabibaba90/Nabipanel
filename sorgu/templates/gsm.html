@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>GSM Sorgu</title>
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+    }
+    form {
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+    }
+    input[type="text"] {
+      padding: 12px 15px;
+      margin-bottom: 15px;
+      border: none;
+      border-radius: 6px;
+      background-color: #222;
+      color: white;
+      font-size: 1rem;
+      outline: none;
+      transition: background-color 0.3s ease;
+    }
+    input[type="text"]:focus {
+      background-color: #333;
+    }
+    button {
+      padding: 12px 15px;
+      background-color: #0078d7;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #005a9e;
+    }
+    pre {
+      background-color: #222;
+      padding: 15px;
+      border-radius: 6px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin-top: 25px;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Telefon Numarası (GSM) Sorgulama<br />Lütfen /gsmtc yazıp numaranızı gönderin</h1>
+  <form method="POST">
+    <input type="text" name="gsm" placeholder="5xx xxx xx xx" required />
+    <button type="submit">Sorgula</button>
+  </form>
+
+  {% if sonuc %}
+    <h3>Sonuç:</h3>
+    <pre>{{ sonuc }}</pre>
+  {% endif %}
+</body>
+</html>

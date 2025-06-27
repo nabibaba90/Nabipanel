@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nebi & Mosco'nun Mernis Paneli</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: url('/static/thomas-shelby.gif') center center no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: white;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    .header-bar {
+      background-color: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      left: 0;
+      z-index: 10000;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.7);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1 1 auto;
+      min-width: 150px;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      flex: 2 1 auto;
+      min-width: 150px;
+    }
+    .badge {
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: bold;
+      color: black;
+      white-space: nowrap;
+    }
+    .badge.free {
+      background-color: #7f52ff;
+      color: white;
+    }
+    .badge.vip {
+      background-color: gold;
+      color: black;
+    }
+    /* Menü toggle butonu - sağ alt köşeye taşı */
+    .menu-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .menu-toggle div {
+      width: 12px;
+      height: 12px;
+      background: white;
+      border-radius: 50%;
+    }
+    .menu {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      width: 250px;
+      height: 100vh;
+      background-color: #111;
+      color: white;
+      z-index: 9998;
+      padding: 20px;
+      box-shadow: 3px 0 10px rgba(0,0,0,0.6);
+      transition: left 0.3s ease;
+      overflow-y: auto;
+    }
+    .menu.open {
+      left: 0;
+    }
+    .menu .close-btn {
+      font-size: 22px;
+      color: #fff;
+      cursor: pointer;
+      text-align: right;
+      margin-bottom: 15px;
+    }
+    .menu h5 {
+      color: #00ffcc;
+      margin-bottom: 15px;
+    }
+    .menu-section {
+      margin-bottom: 15px;
+    }
+    .menu-section-title {
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 5px;
+      padding: 10px;
+      background-color: #222;
+      border-radius: 6px;
+    }
+    .submenu {
+      display: none;
+      padding-left: 10px;
+    }
+    .submenu a {
+      display: block;
+      color: #ddd;
+      text-decoration: none;
+      padding: 8px;
+      border-radius: 4px;
+      transition: 0.2s;
+    }
+    .submenu a:hover {
+      background-color: #00ffcc;
+      color: #000;
+    }
+    .container-main {
+      margin-top: 70px; /* header yüksekliği kadar boşluk */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: calc(100vh - 70px);
+      padding: 0 10px;
+      text-align: center;
+    }
+    .center-box {
+      background: rgba(60, 60, 60, 0.3);
+      backdrop-filter: blur(10px);
+      padding: 25px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+      margin-bottom: 15px;
+    }
+    .vip-status {
+      font-size: 18px;
+      font-weight: 700;
+      color: gold;
+      text-shadow: 0 0 6px gold;
+      margin-bottom: 20px;
+    }
+
+    /* Responsive */
+    @media (max-width: 576px) {
+      .header-bar {
+        font-size: 13px;
+        padding: 8px 12px;
+        gap: 5px;
+      }
+      .header-left, .header-right {
+        flex: 1 1 100%;
+        justify-content: center;
+      }
+      .header-left {
+        order: 1;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+      .header-right {
+        order: 2;
+        gap: 12px;
+      }
+      .badge {
+        font-size: 11px;
+        padding: 2px 7px;
+      }
+      .container-main {
+        margin-top: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Üst bar (isteğe bağlı) -->
+<div class="header-bar">
+  <div class="header-left">
+    <span>Hoşgeldin, <strong>{{ kullanici }}</strong></span>
+    {% if tip == 'vip' %}
+      <span class="badge vip">VIP Kullanıcı</span>
+    {% else %}
+      <span class="badge free">Free Kullanıcı</span>
+    {% endif %}
+  </div>
+  <div class="header-right">
+    <span>🌐 Aktif Kullanıcı: <strong>42</strong></span>
+    <span>🔥 VIP Kullanıcılar: <strong>8</strong></span>
+    <span>❄ Free Kullanıcılar: <strong>34</strong></span>
+  </div>
+</div>
+
+<!-- Ana içerik -->
+<div class="container-main">
+  <div class="center-box">
+    <h1>Nebi & Mosco'nun Mernis Paneli</h1>
+    <p>Hoş geldiniz! Menüden bir sorgu seçin.</p>
+    {% if tip == 'vip' %}
+      <div class="vip-status">⭐ VIP Kullanıcı Ayrıcalıkları Aktif ⭐</div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Menü toggle butonu (sağ alt köşe) -->
+<div class="menu-toggle" onclick="openMenu()">
+  <div></div><div></div><div></div>
+</div>
+
+<!-- Menü -->
+<div class="menu" id="menu">
+  <div class="close-btn" onclick="closeMenu()">✖</div>
+  <h5>📂 Sorgular</h5>
+
+  <div class="menu-section">
+    <div class="menu-section-title" onclick="toggleSubmenu('mernis')">📘 Mernis 2025</div>
+    <div class="submenu" id="mernis">
+      <a href="/adsoyad">Ad Soyad Sorgu <span class="badge free">FREE</span></a>
+      <a href="/tc">TC Sorgu <span class="badge free">FREE</span></a>
+      <a href="/adres">Adres Sorgu <span class="badge free">FREE</span></a>
+      <a href="/aile">Aile Sorgu <span class="badge free">FREE</span></a>
+    </div>
+  </div>
+
+  <div class="menu-section">
+    <div class="menu-section-title" onclick="toggleSubmenu('gsm')">📱 GSM Sorguları</div>
+    <div class="submenu" id="gsm">
+      <a href="{% if tip == 'vip' %}/tcgsm{% else %}/abonelik{% endif %}">GSM → TC <span class="badge vip">VIP</span></a>
+      <a href="{% if tip == 'vip' %}/tcgsm{% else %}/abonelik{% endif %}">TC → GSM <span class="badge vip">VIP</span></a>
+      <a href="{% if tip == 'vip' %}/aile{% else %}/abonelik{% endif %}">Sülale GSM <span class="badge vip">VIP</span></a>
+      <a href="{% if tip == 'vip' %}/call{% else %}/abonelik{% endif %}">Call <span class="badge vip">VIP</span></a>
+      <a href="{% if tip == 'vip' %}/smsbomber{% else %}/abonelik{% endif %}">SMS Bomber <span class="badge vip">VIP</span></a>
+    </div>
+  </div>
+
+  <div class="menu-section">
+    <div class="menu-section-title" onclick="toggleSubmenu('ek')">🧩 Ek Araçlar</div>
+    <div class="submenu" id="ek">
+      <a href="{% if tip == 'vip' %}/posta-kodu{% else %}/abonelik{% endif %}">Posta Kodu <span class="badge vip">VIP</span></a>
+      <a href="{% if tip == 'vip' %}/iban{% else %}/abonelik{% endif %}">IBAN <span class="badge vip">VIP</span></a>
+      <a href="{% if tip == 'vip' %}/burc{% else %}/abonelik{% endif %}">Burç Bilgisi <span class="badge vip">VIP</span></a>
+      <a href="{% if tip == 'vip' %}/ip{% else %}/abonelik{% endif %}">IP Sorgu <span class="badge vip">VIP</span></a>
+    </div>
+  </div>
+
+  <div class="menu-section">
+    <div class="menu-section-title" onclick="toggleSubmenu('ihbarlar')">🚨 İhbar Araçları</div>
+    <div class="submenu" id="ihbarlar">
+      <a href="{% if tip == 'vip' %}/jandarma{% else %}/abonelik{% endif %}">Jandarma İhbar <span class="badge vip">VIP</span></a>
+      <a href="{% if tip == 'vip' %}/egm{% else %}/abonelik{% endif %}">EGM İhbar <span class="badge vip">VIP</span></a>
+      <a href="{% if tip == 'vip' %}/usom{% else %}/abonelik{% endif %}">USOM İhbar <span class="badge vip">VIP</span></a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openMenu() {
+    document.getElementById("menu").classList.add("open");
+  }
+  function closeMenu() {
+    document.getElementById("menu").classList.remove("open");
+  }
+  function toggleSubmenu(id) {
+    const submenu = document.getElementById(id);
+    submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+  }
+</script>
+
+</body>
+</html>

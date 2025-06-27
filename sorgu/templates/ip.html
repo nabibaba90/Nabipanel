@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>IP Sorgulama</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 30px;
+    }
+    h1 {
+      color: #00bfff;
+    }
+    input, button {
+      width: 300px;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 15px;
+    }
+    input {
+      background-color: #222;
+      color: white;
+    }
+    button {
+      background-color: #0066cc;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0055aa;
+    }
+    pre {
+      background-color: #222;
+      padding: 15px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>IP Sorgulama</h1>
+  <form method="POST">
+    <input type="text" name="ip" placeholder="IP adresini girin" required />
+    <button type="submit">Sorgula</button>
+  </form>
+
+  {% if sonuc %}
+    <h3>Sonuç:</h3>
+    <pre>{{ sonuc }}</pre>
+  {% endif %}
+</body>
+</html>

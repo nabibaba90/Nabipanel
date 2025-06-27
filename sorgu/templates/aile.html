@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Aile Sorgulama</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 30px;
+    }
+    h1 {
+      color: #ffcc00;
+    }
+    input, button {
+      width: 300px;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: none;
+      font-size: 15px;
+    }
+    input {
+      background-color: #222;
+      color: white;
+    }
+    button {
+      background-color: #ffaa00;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e69500;
+    }
+    pre {
+      background-color: #222;
+      padding: 15px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Aile Bilgisi Sorgulama</h1>
+  <form method="POST">
+    <input type="text" name="tc" placeholder="T.C. Kimlik No" required />
+    <button type="submit">Sorgula</button>
+  </form>
+
+  {% if sonuc %}
+    <h3>Sonuç:</h3>
+    <pre>{{ sonuc }}</pre>
+  {% endif %}
+</body>
+</html>

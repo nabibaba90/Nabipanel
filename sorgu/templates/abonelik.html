@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VIP Abonelik | Nebi & Mosco Panel</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: url('/static/thomas-shelby.gif') center center no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 60px;
+      background-color: rgba(0, 0, 0, 0.7);
+      background-blend-mode: darken;
+    }
+
+    .container {
+      background: rgba(30, 30, 30, 0.85);
+      padding: 30px;
+      border-radius: 16px;
+      max-width: 800px;
+      width: 95%;
+      box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+      text-align: center;
+    }
+
+    h1 {
+      color: #00ffcc;
+      margin-bottom: 15px;
+    }
+
+    .user-info {
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 25px;
+    }
+
+    .card {
+      background: #111;
+      color: white;
+      margin: 10px 0;
+      border: 1px solid #00ffcc;
+      border-radius: 10px;
+      padding: 20px;
+      transition: 0.3s;
+    }
+
+    .card:hover {
+      background-color: #00ffcc;
+      color: black;
+    }
+
+    .buy-btn {
+      margin-top: 15px;
+      background-color: gold;
+      border: none;
+      color: black;
+      font-weight: bold;
+      padding: 8px 14px;
+      border-radius: 6px;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .buy-btn:hover {
+      background-color: #ffd700;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>VIP Abonelik</h1>
+    <div class="user-info">
+      Aktif Kullanıcı: <strong>{{ kullanici }}</strong> | Hesap Tipi: <strong>{{ tip }}</strong>
+    </div>
+
+    <div class="card">
+      <h4>🕐 Günlük VIP</h4>
+      <p>24 saat boyunca tüm özellikler aktif!</p>
+      <div><strong>₺20</strong></div>
+      <a class="buy-btn" href="https://t.me/DrakaNabi" target="_blank">Telegram’dan Satın Al</a>
+    </div>
+
+    <div class="card">
+      <h4>📅 Haftalık VIP</h4>
+      <p>7 gün boyunca tam erişim</p>
+      <div><strong>₺100</strong></div>
+      <a class="buy-btn" href="https://t.me/DrakaNabi" target="_blank">Telegram’dan Satın Al</a>
+    </div>
+
+    <div class="card">
+      <h4>🗓️ Aylık VIP</h4>
+      <p>30 gün boyunca limitsiz erişim</p>
+      <div><strong>₺300</strong></div>
+      <a class="buy-btn" href="https://t.me/DrakaNabi" target="_blank">Telegram’dan Satın Al</a>
+    </div>
+
+    <div class="card">
+      <h4>📆 3 Aylık VIP</h4>
+      <p>90 gün boyunca tüm VIP hizmetleri</p>
+      <div><strong>₺750</strong></div>
+      <a class="buy-btn" href="https://t.me/DrakaNabi" target="_blank">Telegram’dan Satın Al</a>
+    </div>
+
+    <div class="card">
+      <h4>♾️ Sınırsız VIP</h4>
+      <p>Tek seferlik ödeme ile ömür boyu VIP</p>
+      <div><strong>₺1500</strong></div>
+      <a class="buy-btn" href="https://t.me/DrakaNabi" target="_blank">Telegram’dan Satın Al</a>
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sülale GSM Sorgu</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #eee;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      min-height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      width: 320px;
+      max-width: 90vw;
+    }
+    input {
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button {
+      background: #28a745;
+      border: none;
+      padding: 12px;
+      color: white;
+      font-size: 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #218838;
+    }
+    pre {
+      background: #222;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 30px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sülale GSM Sorgulama</h1>
+  <form method="POST">
+    <input type="text" name="gsm" placeholder="5xx xxx xx xx" required autocomplete="off" />
+    <button type="submit">Sorgula</button>
+  </form>
+
+  {% if sonuc %}
+  <pre>{{ sonuc }}</pre>
+  {% endif %}
+</body>
+</html>

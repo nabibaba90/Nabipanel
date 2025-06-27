@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>/tc Sorgu - Nebi & Mosco Panel</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    h2 {
+      color: #00ff00;
+      margin-bottom: 8px;
+      user-select: none;
+    }
+
+    .anasayfa-link {
+      color: #00ff00;
+      font-weight: bold;
+      text-decoration: none;
+      margin-bottom: 15px;
+      display: inline-block;
+      user-select: none;
+      transition: color 0.3s ease;
+    }
+    .anasayfa-link:hover {
+      text-decoration: underline;
+      color: #00dd00;
+    }
+
+    form {
+      max-width: 600px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
+
+    input[type="text"] {
+      padding: 12px 15px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      outline: none;
+      background-color: #222;
+      color: #eee;
+      transition: background-color 0.3s ease;
+    }
+    input[type="text"]:focus {
+      background-color: #333;
+    }
+
+    button {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background-color: #00ff00;
+      color: #000;
+      font-weight: 700;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+    }
+    button:hover {
+      background-color: #00dd00;
+    }
+
+    pre {
+      background-color: #111;
+      color: #0f0;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #00ff00;
+      white-space: pre-wrap;
+      max-width: 600px;
+      width: 90%;
+      font-family: monospace;
+      user-select: text;
+    }
+  </style>
+</head>
+<body>
+  <h2>T.C. Kimlik Sorgulama</h2>
+  <a href="/" class="anasayfa-link">🏠 Anasayfaya Dön</a>
+
+  <form method="POST">
+    <input type="text" name="tc" placeholder="T.C. Kimlik No" required />
+    <button type="submit">Sorgula</button>
+  </form>
+
+  {% if sonuc %}
+    <h3>Sonuç:</h3>
+    <pre>{{ sonuc }}</pre>
+  {% endif %}
+</body>
+</html>

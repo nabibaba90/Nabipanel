@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>USOM İhbar - VIP Panel</title>
+<style>
+  body {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #e0e0e0;
+    margin: 0; padding: 0;
+  }
+  .container {
+    max-width: 700px;
+    margin: 60px auto;
+    background: #1a1a1a;
+    border-radius: 12px;
+    padding: 30px 40px;
+    box-shadow: 0 0 20px #00ffcc;
+  }
+  h1 {
+    text-align: center;
+    color: #00ffcc;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+  }
+  label {
+    display: block;
+    margin: 20px 0 8px;
+    font-weight: 600;
+  }
+  input[type="text"], textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: none;
+    background: #121212;
+    color: #00ffcc;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: 0.3s;
+  }
+  input[type="text"]:focus, textarea:focus {
+    outline: none;
+    background: #003d33;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+  button {
+    background: #00ffcc;
+    color: #121212;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 0;
+    font-size: 18px;
+    width: 100%;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 30px;
+    letter-spacing: 1.5px;
+    transition: background-color 0.3s;
+  }
+  button:hover {
+    background-color: #00c9a7;
+  }
+  .result {
+    background: #003d33;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 40px;
+    white-space: pre-wrap;
+    font-family: monospace;
+    font-size: 14px;
+    color: #a0f0dd;
+  }
+  @media (max-width: 480px) {
+    .container {
+      margin: 20px;
+      padding: 20px;
+    }
+    button {
+      font-size: 16px;
+      padding: 12px 0;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>USOM İhbar Paneli</h1>
+    <form method="POST">
+      <label for="konum">Olayın Konumu (adres, ilçe, vs):</label>
+      <input type="text" id="konum" name="konum" placeholder="Konum girin..." required />
+
+      <label for="detay">Detaylar (olay hakkında açıklama):</label>
+      <textarea id="detay" name="detay" placeholder="Detayları yazın..." required></textarea>
+
+      <button type="submit">İhbar Gönder</button>
+    </form>
+
+    {% if sonuc %}
+    <div class="result">{{ sonuc|safe }}</div>
+    {% endif %}
+  </div>
+</body>
+</html>
