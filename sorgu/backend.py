@@ -6,7 +6,7 @@ app = Flask(__name__)
 app.secret_key = "gizli_key_2025"
 loop = asyncio.new_event_loop()
 
-KULLANICI_DOSYASI = "templates/users.json"
+KULLANICI_DOSYASI = "sorgu/users.json"
 
 def kullanicilari_yukle():
     if os.path.exists(KULLANICI_DOSYASI):
