@@ -1,167 +1,159 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <title>VIP Panel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: url('https://i.pinimg.com/originals/35/89/4c/35894ce2432de67d6bb75b0b1c03fcf6.gif') no-repeat center center fixed;
-      background-size: cover;
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
-    }
-
-    .menu-button {
-      position: fixed;
-      top: 10px;
-      right: 15px;
-      font-size: 30px;
-      cursor: pointer;
-      z-index: 1001;
-    }
-
-    .menu {
-      position: fixed;
-      top: 0;
-      left: -300px;
-      width: 260px;
-      height: 100%;
-      background-color: rgba(10,10,10,0.95);
-      overflow-y: auto;
-      transition: left 0.3s ease;
-      z-index: 1000;
-      padding: 20px;
-    }
-
-    .menu.open {
-      left: 0;
-    }
-
-    .close-btn {
-      text-align: right;
-      cursor: pointer;
-      font-size: 25px;
-      margin-bottom: 20px;
-    }
-
-    .menu-section {
-      margin-bottom: 15px;
-    }
-
-    .menu-section-title {
-      font-weight: bold;
-      margin-bottom: 5px;
-      cursor: pointer;
-    }
-
-    .submenu {
-      display: none;
-      margin-left: 10px;
-    }
-
-    .submenu a {
-      display: block;
-      text-decoration: none;
-      color: #ccc;
-      padding: 4px 0;
-    }
-
-    .badge {
-      background: gray;
-      padding: 2px 5px;
-      font-size: 10px;
-      border-radius: 4px;
-      margin-left: 5px;
-    }
-
-    .badge.vip { background: gold; color: black; }
-    .badge.free { background: limegreen; color: black; }
-
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Panel Menü Örneği</title>
+<style>
+  body {
+    background: #0a0a23;
+    color: #eee;
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+  }
+  .menu {
+    width: 280px;
+    background: #11112b;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .menu-section {
+    margin-bottom: 20px;
+  }
+  .menu-section-title {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 8px 0;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #00e0ff;
+  }
+  .menu-section-title:hover {
+    color: #00b7cc;
+  }
+  .submenu {
+    display: none;
+    margin-left: 15px;
+    margin-top: 8px;
+  }
+  .submenu a {
+    display: block;
+    padding: 6px 0;
+    text-decoration: none;
+    color: #9ad6ff;
+    font-size: 15px;
+    border-left: 2px solid transparent;
+    transition: border-color 0.3s;
+  }
+  .submenu a:hover {
+    border-left: 2px solid #00e0ff;
+    color: #00e0ff;
+  }
+  a.badge {
+    margin-left: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    color: white;
+  }
+  .badge.free {
+    background-color: #4CAF50;
+  }
+  .badge.vip {
+    background-color: #e53935;
+  }
+  .badge.kurucu {
+    background-color: #FFD700;
+    color: black;
+  }
+  a.menu-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+</style>
 </head>
 <body>
-  <div class="menu-button" onclick="openMenu()">☰</div>
 
-  <div class="menu" id="menu">
-    <div class="close-btn" onclick="closeMenu()">✖</div>
-    <h3>📂 Panel Menüsü</h3>
+<div class="menu">
 
-    <div class="menu-section">
-      <div class="menu-section-title" onclick="toggleSubmenu('mernis')">📘 Mernis 2025</div>
-      <div class="submenu" id="mernis">
-        <a href="/adsoyad">Ad Soyad Sorgu <span class="badge free">FREE</span></a>
-        <a href="/tc">TC Sorgu <span class="badge free">FREE</span></a>
-        <a href="/adres">Adres Sorgu <span class="badge free">FREE</span></a>
-        <a href="/aile">Aile Sorgu <span class="badge free">FREE</span></a>
-      </div>
+  <div class="menu-section">
+    <div class="menu-section-title" onclick="toggleSubmenu('mernis')">📘 Mernis 2025 <span>▼</span></div>
+    <div class="submenu" id="mernis">
+      <a href="/adsoyad" class="menu-link">Ad Soyad Sorgu <span class="badge free">FREE</span></a>
+      <a href="/tc" class="menu-link">TC Sorgu <span class="badge free">FREE</span></a>
+      <a href="/adres" class="menu-link">Adres Sorgu <span class="badge free">FREE</span></a>
+      <a href="/aile" class="menu-link">Aile Sorgu <span class="badge free">FREE</span></a>
     </div>
-
-    <div class="menu-section">
-      <div class="menu-section-title" onclick="toggleSubmenu('gsm')">📱 GSM Sorguları</div>
-      <div class="submenu" id="gsm">
-        <a href="{% if tip == 'vip' %}/tcgsm{% else %}/abonelik{% endif %}">GSM → TC <span class="badge vip">VIP</span></a>
-        <a href="{% if tip == 'vip' %}/tcgsm{% else %}/abonelik{% endif %}">TC → GSM <span class="badge vip">VIP</span></a>
-        <a href="{% if tip == 'vip' %}/aile{% else %}/abonelik{% endif %}">Sülale GSM <span class="badge vip">VIP</span></a>
-        <a href="{% if tip == 'vip' %}/call{% else %}/abonelik{% endif %}">Call <span class="badge vip">VIP</span></a>
-        <a href="{% if tip == 'vip' %}/smsbomber{% else %}/abonelik{% endif %}">SMS Bomber <span class="badge vip">VIP</span></a>
-      </div>
-    </div>
-
-    <div class="menu-section">
-      <div class="menu-section-title" onclick="toggleSubmenu('instagram')">📸 Instagram İşlemleri</div>
-      <div class="submenu" id="instagram">
-        <a href="{% if tip == 'vip' %}/takipci{% else %}/abonelik{% endif %}">Takipçi Gönder <span class="badge vip">VIP</span></a>
-        <a href="{% if tip == 'vip' %}/begeni{% else %}/abonelik{% endif %}">Beğeni Gönder <span class="badge vip">VIP</span></a>
-        <a href="{% if tip == 'vip' %}/izlenme{% else %}/abonelik{% endif %}">İzlenme Gönder <span class="badge vip">VIP</span></a>
-      </div>
-    </div>
-
-    <div class="menu-section">
-      <div class="menu-section-title" onclick="toggleSubmenu('ek')">🧩 Ek Araçlar</div>
-      <div class="submenu" id="ek">
-        <a href="{% if tip == 'vip' %}/posta-kodu{% else %}/abonelik{% endif %}">Posta Kodu <span class="badge vip">VIP</span></a>
-        <a href="{% if tip == 'vip' %}/iban{% else %}/abonelik{% endif %}">IBAN <span class="badge vip">VIP</span></a>
-        <a href="{% if tip == 'vip' %}/burc{% else %}/abonelik{% endif %}">Burç Bilgisi <span class="badge vip">VIP</span></a>
-        <a href="{% if tip == 'vip' %}/ip{% else %}/abonelik{% endif %}">IP Sorgu <span class="badge vip">VIP</span></a>
-      </div>
-    </div>
-
-    <div class="menu-section">
-      <div class="menu-section-title" onclick="toggleSubmenu('ihbar')">🚨 İhbar Araçları</div>
-      <div class="submenu" id="ihbar">
-        <a href="{% if tip == 'vip' %}/jandarma{% else %}/abonelik{% endif %}">Jandarma <span class="badge vip">VIP</span></a>
-        <a href="{% if tip == 'vip' %}/egm{% else %}/abonelik{% endif %}">EGM <span class="badge vip">VIP</span></a>
-        <a href="{% if tip == 'vip' %}/usom{% else %}/abonelik{% endif %}">USOM <span class="badge vip">VIP</span></a>
-      </div>
-    </div>
-
-    {% if tip == 'kurucu' %}
-    <div class="menu-section">
-      <div class="menu-section-title" onclick="toggleSubmenu('admin')">⚙️ Yönetim</div>
-      <div class="submenu" id="admin">
-        <a href="/admin">Kullanıcı Ayarları <span class="badge">Kurucu</span></a>
-        <a href="/siparisler">Siparişler <span class="badge">Kurucu</span></a>
-      </div>
-    </div>
-    {% endif %}
   </div>
 
-  <script>
-    function openMenu() {
-      document.getElementById("menu").classList.add("open");
-    }
+  <div class="menu-section">
+    <div class="menu-section-title" onclick="toggleSubmenu('gsm')">📱 GSM Sorguları <span>▼</span></div>
+    <div class="submenu" id="gsm">
+      <a href="{% if tip in ['vip', 'kurucu'] %}/tcgsm{% else %}/abonelik{% endif %}" class="menu-link">GSM → TC <span class="badge vip">VIP</span></a>
+      <a href="{% if tip in ['vip', 'kurucu'] %}/tcgsm{% else %}/abonelik{% endif %}" class="menu-link">TC → GSM <span class="badge vip">VIP</span></a>
+      <a href="{% if tip in ['vip', 'kurucu'] %}/aile{% else %}/abonelik{% endif %}" class="menu-link">Sülale GSM <span class="badge vip">VIP</span></a>
+      <a href="{% if tip in ['vip', 'kurucu'] %}/call{% else %}/abonelik{% endif %}" class="menu-link">Call <span class="badge vip">VIP</span></a>
+      <a href="{% if tip in ['vip', 'kurucu'] %}/smsbomber{% else %}/abonelik{% endif %}" class="menu-link">SMS Bomber <span class="badge vip">VIP</span></a>
+    </div>
+  </div>
 
-    function closeMenu() {
-      document.getElementById("menu").classList.remove("open");
-    }
+  <div class="menu-section">
+    <div class="menu-section-title" onclick="toggleSubmenu('insta')">📸 Instagram <span>▼</span></div>
+    <div class="submenu" id="insta">
+      <a href="{% if tip in ['vip', 'kurucu'] %}/instagram{% else %}/abonelik{% endif %}" class="menu-link">Takipçi / Beğeni / İzlenme <span class="badge vip">VIP</span></a>
+    </div>
+  </div>
 
-    function toggleSubmenu(id) {
-      const menu = document.getElementById(id);
-      menu.style.display = menu.style.display === "block" ? "none" : "block";
+  <div class="menu-section">
+    <div class="menu-section-title" onclick="toggleSubmenu('ek')">🧩 Ek Araçlar <span>▼</span></div>
+    <div class="submenu" id="ek">
+      <a href="{% if tip in ['vip', 'kurucu'] %}/posta-kodu{% else %}/abonelik{% endif %}" class="menu-link">Posta Kodu <span class="badge vip">VIP</span></a>
+      <a href="{% if tip in ['vip', 'kurucu'] %}/iban{% else %}/abonelik{% endif %}" class="menu-link">IBAN <span class="badge vip">VIP</span></a>
+      <a href="{% if tip in ['vip', 'kurucu'] %}/burc{% else %}/abonelik{% endif %}" class="menu-link">Burç <span class="badge vip">VIP</span></a>
+      <a href="{% if tip in ['vip', 'kurucu'] %}/ip{% else %}/abonelik{% endif %}" class="menu-link">IP Sorgu <span class="badge vip">VIP</span></a>
+    </div>
+  </div>
+
+  <div class="menu-section">
+    <div class="menu-section-title" onclick="toggleSubmenu('ihbar')">🚨 İhbarlar <span>▼</span></div>
+    <div class="submenu" id="ihbar">
+      <a href="{% if tip in ['vip', 'kurucu'] %}/jandarma{% else %}/abonelik{% endif %}" class="menu-link">Jandarma <span class="badge vip">VIP</span></a>
+      <a href="{% if tip in ['vip', 'kurucu'] %}/egm{% else %}/abonelik{% endif %}" class="menu-link">EGM <span class="badge vip">VIP</span></a>
+      <a href="{% if tip in ['vip', 'kurucu'] %}/usom{% else %}/abonelik{% endif %}" class="menu-link">USOM <span class="badge vip">VIP</span></a>
+    </div>
+  </div>
+
+  {% if tip in ['vip', 'kurucu'] %}
+  <div class="menu-section">
+    <div class="menu-section-title" onclick="toggleSubmenu('yonetim')">🛠 Yönetim <span>▼</span></div>
+    <div class="submenu" id="yonetim">
+      <a href="/admin" class="menu-link">Admin Ayarları <span class="badge kurucu">KURUCU</span></a>
+      <a href="/siparisler" class="menu-link">Siparişler <span class="badge vip">VIP</span></a>
+    </div>
+  </div>
+  {% endif %}
+
+  <a href="/cikis" style="color:#f44336; font-weight:bold; display:block; margin-top:20px;">🚪 Çıkış</a>
+
+</div>
+
+<script>
+  function toggleSubmenu(id) {
+    const submenu = document.getElementById(id);
+    if (submenu.style.display === 'block') {
+      submenu.style.display = 'none';
+    } else {
+      submenu.style.display = 'block';
     }
-  </script>
+  }
+</script>
+
 </body>
 </html>
