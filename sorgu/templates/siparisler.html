@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>📦 Sipariş Geçmişi - VIP</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #0f0f0f;
+      color: #f0f0f0;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #00f7ff;
+    }
+    .siparis-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+    .siparis-table th, .siparis-table td {
+      border: 1px solid #444;
+      padding: 10px;
+      text-align: center;
+    }
+    .siparis-table th {
+      background-color: #1a1a1a;
+      color: #00f7ff;
+    }
+    .siparis-table tr:nth-child(even) {
+      background-color: #1c1c1c;
+    }
+    .siparis-table tr:hover {
+      background-color: #2b2b2b;
+    }
+    .geri-btn {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: #ccc;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .geri-btn:hover {
+      color: #00f7ff;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>📦 VIP Sipariş Geçmişi</h2>
+
+  {% if siparisler %}
+    <table class="siparis-table">
+      <tr>
+        <th>#</th>
+        <th>Kullanıcı</th>
+        <th>İşlem</th>
+        <th>Hedef</th>
+        <th>Zaman</th>
+      </tr>
+      {% for s in siparisler %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ s.kullanici }}</td>
+        <td>{{ s.islem }}</td>
+        <td>{{ s.hedef }}</td>
+        <td>{{ s.tarih }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p style="text-align: center;">🚫 Henüz hiçbir sipariş kaydı bulunamadı.</p>
+  {% endif %}
+
+  <a class="geri-btn" href="/">← Ana Menüye Dön</a>
+
+</body>
+</html>
