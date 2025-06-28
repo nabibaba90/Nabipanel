@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Paneli - VIP Yönetim</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #121212; color: #eee; margin:0; padding:0; }
+    header { background: #222; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { margin: 0; }
+    button { background: #4CAF50; border: none; color: white; padding: 8px 16px; cursor: pointer; border-radius: 4px; }
+    button:hover { background: #45a049; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 10px; border-bottom: 1px solid #333; text-align: left; }
+    th { background: #333; }
+    tr:hover { background: #222; }
+    select, input[type=text], input[type=password] {
+      padding: 6px; margin: 5px; border-radius: 4px;
+      border: 1px solid #555; background: #1c1c1c; color: white;
+    }
+    .form-row { margin-bottom: 15px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin Ayarları</h1>
+    <div>
+      <button onclick="location.reload()">Yenile</button>
+    </div>
+  </header>
+
+  <section>
+    <p>Toplam Kullanıcı: <strong>{{ users|length }}</strong></p>
+    <p>VIP Kullanıcı: <strong>{{ users|selectattr('type', 'equalto', 'vip')|list|length }}</strong></p>
+    <p>Free Kullanıcı: <strong>{{ users|selectattr('type', 'equalto', 'free')|list|length }}</strong></p>
+    <p>Aktif Kullanıcı: <strong>{{ users|selectattr('active')|list|length }}</strong></p>
+  </section>
+
+  <section>
+    <h2>Kullanıcılar</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Kullanıcı Adı</th>
+          <th>Tip</th>
+          <th>Durum</th>
+          <th>İşlemler</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for user in users %}
+        <tr>
+          <td>{{ user.username }}</td>
+          <td>
+            <select onchange="changeUserType('{{ user.username }}', this.value)">
+              <option value="free" {% if user.type == 'free' %}selected{% endif %}>Free</option>
+              <option value="vip" {% if user.type == 'vip' %}selected{% endif %}>VIP</option>
+            </select>
+          </td>
+          <td>{{ 'Aktif' if user.active else 'Pasif' }}</td>
+          <td><button onclick="deleteUser('{{ user.username }}')">Sil</button></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Yeni Kullanıcı Ekle</h2>
+    <form id="addUserForm">
+      <div class="form-row">
+        <input type="text" id="newUsername" placeholder="Kullanıcı Adı" required />
+      </div>
+      <div class="form-row">
+        <input type="password" id="newPassword" placeholder="Şifre" required />
+      </div>
+      <div class="form-row">
+        <select id="newUserType">
+          <option value="free">Free</option>
+          <option value="vip">VIP</option>
+        </select>
+      </div>
+      <button type="submit">Ekle</button>
+    </form>
+  </section>
+
+  <script>
+    // Backend ile AJAX ile entegrasyon için örnek fonksiyonlar:
+    function changeUserType(username, newType) {
+      fetch('/admin/change_type', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username, newType})
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.success) alert(`${username} kullanıcısının tipi ${newType} olarak güncellendi.`);
+        else alert('Güncelleme başarısız.');
+        location.reload();
+      });
+    }
+
+    function deleteUser(username) {
+      if(!confirm('Kullanıcıyı silmek istediğine emin misin?')) return;
+      fetch('/admin/delete_user', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username})
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.success) alert(`${username} kullanıcısı silindi.`);
+        else alert('Silme başarısız.');
+        location.reload();
+      });
+    }
+
+    document.getElementById('addUserForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const username = document.getElementById('newUsername').value.trim();
+      const password = document.getElementById('newPassword').value;
+      const type = document.getElementById('newUserType').value;
+      if(!username || !password) {
+        alert('Lütfen kullanıcı adı ve şifre girin.');
+        return;
+      }
+      fetch('/admin/add_user', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username, password, type})
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.success) {
+          alert(`${username} eklendi.`);
+          location.reload();
+        } else alert('Kullanıcı eklenemedi.');
+      });
+    });
+  </script>
+</body>
+</html>
