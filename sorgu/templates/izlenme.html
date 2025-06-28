@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Instagram İzlenme Gönder</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background: url('/static/view-bg.gif') center center no-repeat;
+      background-size: cover;
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .center-box {
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      margin: 100px auto;
+      border-radius: 15px;
+      max-width: 450px;
+      box-shadow: 0 0 25px cyan;
+      text-align: center;
+      border: 2px solid cyan;
+    }
+    h2 {
+      color: cyan;
+      font-weight: 900;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px cyan;
+    }
+    .btn-vip {
+      background: linear-gradient(45deg, #00ffff, #008080);
+      border: none;
+      font-weight: 700;
+      padding: 12px 30px;
+      border-radius: 12px;
+      color: black;
+      box-shadow: 0 0 20px cyan;
+      transition: 0.3s;
+    }
+    .btn-vip:hover {
+      background: linear-gradient(45deg, #008080, #00ffff);
+      box-shadow: 0 0 30px #00ced1;
+      color: black;
+    }
+    .vip-info {
+      font-size: 15px;
+      margin-top: 15px;
+      color: cyan;
+      font-weight: 700;
+      text-shadow: 0 0 8px cyan;
+    }
+    .alert-info {
+      margin-top: 20px;
+      font-weight: 600;
+      background-color: rgba(0, 255, 255, 0.2);
+      color: cyan;
+      border-color: cyan;
+    }
+  </style>
+</head>
+<body>
+  <div class="center-box">
+    <h2>🎥 Instagram İzlenme Gönder</h2>
+    <form method="POST">
+      <input type="text" name="hedef" class="form-control mb-3" placeholder="Instagram kullanıcı adı" required />
+      <button type="submit" class="btn-vip">1000 İzlenme Gönder</button>
+    </form>
+    <div class="vip-info">
+      ⭐ Her gün 1000 izlenme gönderme hakkınız vardır.
+    </div>
+
+    {% if sonuc %}
+      <div class="alert alert-info">{{ sonuc }}</div>
+    {% endif %}
+  </div>
+</body>
+</html>
