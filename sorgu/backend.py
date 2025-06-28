@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify
 import asyncio, threading, json, os
+from datetime import datetime
 import bot
 
 app = Flask(__name__)
@@ -7,16 +8,27 @@ app.secret_key = "gizli_key_2025"
 loop = asyncio.new_event_loop()
 
 KULLANICI_DOSYASI = "sorgu/users.json"
+SIPARIS_DOSYASI = "siparisler.json"
 
 def kullanicilari_yukle():
     if os.path.exists(KULLANICI_DOSYASI):
-        with open(KULLANICI_DOSYASI, "r") as f:
+        with open(KULLANICI_DOSYASI, "r", encoding="utf-8") as f:
             return json.load(f)
     return {}
 
 def kullanicilari_kaydet(veri):
-    with open(KULLANICI_DOSYASI, "w") as f:
-        json.dump(veri, f, indent=2)
+    with open(KULLANICI_DOSYASI, "w", encoding="utf-8") as f:
+        json.dump(veri, f, indent=2, ensure_ascii=False)
+
+def siparisleri_yukle():
+    if os.path.exists(SIPARIS_DOSYASI):
+        with open(SIPARIS_DOSYASI, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+def siparisleri_kaydet(veri):
+    with open(SIPARIS_DOSYASI, "w", encoding="utf-8") as f:
+        json.dump(veri, f, indent=2, ensure_ascii=False)
 
 async def baslat_bot():
     await bot.client.connect()
@@ -34,13 +46,15 @@ threading.Thread(target=run_loop, daemon=True).start()
 
 def free_yetki():
     tip = session.get("tip")
-    print(f"DEBUG free_yetki(): session tip = {tip}")
-    return tip in ["vip", "free"]
+    return tip in ["vip", "free", "kurucu"]
 
 def vip_yetki():
     tip = session.get("tip")
-    print(f"DEBUG vip_yetki(): session tip = {tip}")
-    return tip == "vip"
+    return tip in ["vip", "kurucu"]
+
+def kurucu_yetki():
+    tip = session.get("tip")
+    return tip == "kurucu"
 
 @app.route('/')
 def index():
@@ -63,31 +77,108 @@ def giris():
             return render_template('giris.html', hata="❌ Bilgiler yanlış")
     return render_template('giris.html')
 
-@app.route('/kayit', methods=['GET', 'POST'])
-def kayit():
-    if request.method == 'POST':
-        kullanici = request.form['kullanici']
-        sifre = request.form['sifre']
-        veriler = kullanicilari_yukle()
-        if kullanici in veriler:
-            return '🚫 Bu kullanıcı zaten var!'
-        veriler[kullanici] = {'sifre': sifre, 'tip': 'free'}
-        kullanicilari_kaydet(veriler)
-        return redirect('/giris')
-    return render_template('kayit.html')
-
-@app.route('/abonelik')
-def abonelik():
-    if 'username' not in session:
-        return redirect('/giris')
-    return render_template("abonelik.html", kullanici=session['username'], tip=session['tip'])
-
 @app.route('/cikis')
 def cikis():
     session.clear()
     return redirect(url_for('giris'))
 
-### === FREE ===
+# --- Instagram İşlemleri Sayfası ---
+@app.route('/instagram', methods=['GET', 'POST'])
+def instagram():
+    if not vip_yetki():
+        return redirect(url_for('abonelik'))
+    mesaj = ""
+    if request.method == 'POST':
+        islem = request.form.get('islem')  # takipci, begeni, izlenme
+        hedef = request.form.get('hedef')  # instagram kullanıcı adı
+        if islem and hedef:
+            siparisler = siparisleri_yukle()
+            siparisler.append({
+                "kullanici": session['username'],
+                "islem": islem,
+                "hedef": hedef,
+                "tarih": asyncio.get_event_loop().time()
+            })
+            siparisleri_kaydet(siparisler)
+            mesaj = f"✅ {islem} işlemi için {hedef} hedefli sipariş alındı."
+        else:
+            mesaj = "❌ Lütfen işlem ve hedef kullanıcı adını giriniz."
+    return render_template('instagram.html', mesaj=mesaj, kullanici=session['username'], tip=session.get('tip'))
+
+# --- Siparişler (Kurucu için) ---
+@app.route('/siparisler')
+def siparisler():
+    if not kurucu_yetki():
+        return "🚫 Bu sayfaya erişim yetkiniz yok."
+    siparisler = siparisleri_yukle()
+    return render_template('siparisler.html', siparisler=siparisler)
+
+# --- Admin Panel ---
+@app.route('/admin')
+def admin_panel():
+    if not vip_yetki():
+        return redirect(url_for('abonelik'))
+    kullanicilar = kullanicilari_yukle()
+    aktif_kullanici_sayisi = len(kullanicilar)
+    vip_kullanicilar = [k for k, v in kullanicilar.items() if v.get('tip') == 'vip']
+    free_kullanicilar = [k for k, v in kullanicilar.items() if v.get('tip') == 'free']
+    kurucu_kullanicilar = [k for k, v in kullanicilar.items() if v.get('tip') == 'kurucu']
+    return render_template('admin.html',
+                           kullanicilar=kullanicilar,
+                           aktif_sayi=aktif_kullanici_sayisi,
+                           vip_list=vip_kullanicilar,
+                           free_list=free_kullanicilar,
+                           kurucu_list=kurucu_kullanicilar,
+                           kullanici=session['username'],
+                           tip=session.get('tip'))
+
+@app.route('/admin/kullanici_ekle', methods=['POST'])
+def admin_kullanici_ekle():
+    if not kurucu_yetki():
+        return jsonify({"error": "Yetkisiz"}), 403
+    data = request.form
+    kullanici = data.get('kullanici')
+    sifre = data.get('sifre')
+    tip = data.get('tip')
+    if not kullanici or not sifre or not tip:
+        return jsonify({"error": "Eksik veri"}), 400
+    kullanicilar = kullanicilari_yukle()
+    if kullanici in kullanicilar:
+        return jsonify({"error": "Kullanıcı zaten var"}), 400
+    kullanicilar[kullanici] = {"sifre": sifre, "tip": tip}
+    kullanicilari_kaydet(kullanicilar)
+    return jsonify({"message": "Kullanıcı eklendi."})
+
+@app.route('/admin/kullanici_sil/<kullanici>', methods=['POST'])
+def admin_kullanici_sil(kullanici):
+    if not kurucu_yetki():
+        return jsonify({"error": "Yetkisiz"}), 403
+    kullanicilar = kullanicilari_yukle()
+    if kullanici not in kullanicilar:
+        return jsonify({"error": "Kullanıcı bulunamadı"}), 404
+    if kullanicilar[kullanici].get('tip') == 'kurucu':
+        return jsonify({"error": "Kurucu silinemez"}), 400
+    del kullanicilar[kullanici]
+    kullanicilari_kaydet(kullanicilar)
+    return jsonify({"message": "Kullanıcı silindi."})
+
+@app.route('/admin/kullanici_tip_degistir', methods=['POST'])
+def admin_kullanici_tip_degistir():
+    if not kurucu_yetki():
+        return jsonify({"error": "Yetkisiz"}), 403
+    data = request.form
+    kullanici = data.get('kullanici')
+    tip = data.get('tip')
+    if not kullanici or not tip:
+        return jsonify({"error": "Eksik veri"}), 400
+    kullanicilar = kullanicilari_yukle()
+    if kullanici not in kullanicilar:
+        return jsonify({"error": "Kullanıcı bulunamadı"}), 404
+    kullanicilar[kullanici]['tip'] = tip
+    kullanicilari_kaydet(kullanicilar)
+    return jsonify({"message": "Kullanıcı tipi güncellendi."})
+
+# Diğer mevcut route'larınızı da aynen koruyabilirsiniz...
 
 @app.route("/adsoyad", methods=["GET", "POST"])
 def adsoyad_sayfa():
@@ -329,6 +420,121 @@ def call():
         except Exception as e:
             sonuc = f"Hata oluştu: {e}"
     return render_template("call.html", sonuc=sonuc)
+
+BEGENI_KAYIT_DOSYASI = "begeni_kayit.json"
+
+def begeni_kayit_yukle():
+    if os.path.exists(BEGENI_KAYIT_DOSYASI):
+        with open(BEGENI_KAYIT_DOSYASI, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+def begeni_kayit_kaydet(veri):
+    with open(BEGENI_KAYIT_DOSYASI, "w", encoding="utf-8") as f:
+        json.dump(veri, f, indent=2, ensure_ascii=False)
+
+@app.route("/begeni", methods=["GET", "POST"])
+def instagram_begeni():
+    if not vip_yetki():
+        return redirect("/abonelik")
+    sonuc = None
+    kullanici = session.get("username")
+    bugun = datetime.now().strftime("%Y-%m-%d")
+
+    if request.method == "POST":
+        hedef = request.form["hedef"]
+        kayitlar = begeni_kayit_yukle()
+
+        if kayitlar.get(kullanici) == bugun:
+            sonuc = "🚫 Zaten bugün 100 beğeni gönderimi yaptınız. Yarın tekrar deneyin."
+        else:
+            komut = f"/begeni {hedef}"
+            future = asyncio.run_coroutine_threadsafe(bot.gonder_ve_bekle(komut), loop)
+            try:
+                cevap = future.result(timeout=60)
+                sonuc = cevap
+                kayitlar[kullanici] = bugun
+                begeni_kayit_kaydet(kayitlar)
+            except Exception as e:
+                sonuc = f"Hata oluştu: {e}"
+
+    return render_template("begeni.html", sonuc=sonuc, kullanici=kullanici, tip=session.get("tip"))
+TAKIPCI_KAYIT_DOSYASI = "takipci_kayit.json"
+
+def takipci_kayit_yukle():
+    if os.path.exists(TAKIPCI_KAYIT_DOSYASI):
+        with open(TAKIPCI_KAYIT_DOSYASI, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+def takipci_kayit_kaydet(veri):
+    with open(TAKIPCI_KAYIT_DOSYASI, "w", encoding="utf-8") as f:
+        json.dump(veri, f, indent=2, ensure_ascii=False)
+
+@app.route("/takipci", methods=["GET", "POST"])
+def instagram_takipci():
+    if not vip_yetki():
+        return redirect("/abonelik")  # Ücretsiz sayfa veya abonelik yönlendirmesi
+    sonuc = None
+    kullanici = session.get("username")
+    bugun = datetime.now().strftime("%Y-%m-%d")
+
+    if request.method == "POST":
+        hedef = request.form["hedef"]
+        kayitlar = takipci_kayit_yukle()
+
+        if kayitlar.get(kullanici) == bugun:
+            sonuc = "🚫 Son 2 günde 1 kez 50 takipçi gönderme hakkınızı kullandınız."
+        else:
+            komut = f"/takipci {hedef}"
+            future = asyncio.run_coroutine_threadsafe(bot.gonder_ve_bekle(komut), loop)
+            try:
+                cevap = future.result(timeout=60)
+                sonuc = cevap
+                kayitlar[kullanici] = bugun
+                takipci_kayit_kaydet(kayitlar)
+            except Exception as e:
+                sonuc = f"Hata oluştu: {e}"
+
+    return render_template("takipci.html", sonuc=sonuc, kullanici=kullanici, tip=session.get("tip"))
+IZLENME_KAYIT_DOSYASI = "izlenme_kayit.json"
+
+def izlenme_kayit_yukle():
+    if os.path.exists(IZLENME_KAYIT_DOSYASI):
+        with open(IZLENME_KAYIT_DOSYASI, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
+
+def izlenme_kayit_kaydet(veri):
+    with open(IZLENME_KAYIT_DOSYASI, "w", encoding="utf-8") as f:
+        json.dump(veri, f, indent=2, ensure_ascii=False)
+
+@app.route("/izlenme", methods=["GET", "POST"])
+def instagram_izlenme():
+    if not vip_yetki():
+        return redirect("/abonelik")
+    sonuc = None
+    kullanici = session.get("username")
+    bugun = datetime.now().strftime("%Y-%m-%d")
+
+    if request.method == "POST":
+        hedef = request.form["hedef"]
+        kayitlar = izlenme_kayit_yukle()
+
+        if kayitlar.get(kullanici) == bugun:
+            sonuc = "🚫 Bugün 1000 izlenme gönderme hakkınızı kullandınız. Yarın tekrar deneyin."
+        else:
+            komut = f"/izlenme {hedef}"
+            future = asyncio.run_coroutine_threadsafe(bot.gonder_ve_bekle(komut), loop)
+            try:
+                cevap = future.result(timeout=60)
+                sonuc = cevap
+                kayitlar[kullanici] = bugun
+                izlenme_kayit_kaydet(kayitlar)
+            except Exception as e:
+                sonuc = f"Hata oluştu: {e}"
+
+    return render_template("izlenme.html", sonuc=sonuc, kullanici=kullanici, tip=session.get("tip"))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
