@@ -439,6 +439,5 @@ def call():
             sonuc = f"Hata oluştu: {e}"
     return render_template("call.html", sonuc=sonuc)
 
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
