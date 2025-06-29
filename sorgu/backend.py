@@ -1,39 +1,135 @@
-from flask import Flask, render_template, request, session, redirect, url_for, jsonify import asyncio, threading, json, os from datetime import datetime import bot
+from flask import Flask, render_template, request, session, redirect, url_for, jsonify
+import asyncio, threading, json, os
+from datetime import datetime
+import bot
 
-app = Flask(name) app.secret_key = "gizli_key_2025" loop = asyncio.new_event_loop()
+app = Flask(__name__)
+app.secret_key = "gizli_key_2025"
+loop = asyncio.new_event_loop()
 
-KULLANICI_DOSYASI = "sorgu/users.json" SIPARIS_DOSYASI = "siparisler.json"
+KULLANICI_DOSYASI = "sorgu/users.json"
+SIPARIS_DOSYASI = "siparisler.json"
 
-def kullanicilari_yukle(): if os.path.exists(KULLANICI_DOSYASI): with open(KULLANICI_DOSYASI, "r", encoding="utf-8") as f: return json.load(f) return {}
+def kullanicilari_yukle():
+    if os.path.exists(KULLANICI_DOSYASI):
+        with open(KULLANICI_DOSYASI, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {}
 
-def kullanicilari_kaydet(veri): with open(KULLANICI_DOSYASI, "w", encoding="utf-8") as f: json.dump(veri, f, indent=2, ensure_ascii=False)
+def kullanicilari_kaydet(veri):
+    with open(KULLANICI_DOSYASI, "w", encoding="utf-8") as f:
+        json.dump(veri, f, indent=2, ensure_ascii=False)
 
-def siparisleri_yukle(): if os.path.exists(SIPARIS_DOSYASI): with open(SIPARIS_DOSYASI, "r", encoding="utf-8") as f: return json.load(f) return []
+def siparisleri_yukle():
+    if os.path.exists(SIPARIS_DOSYASI):
+        with open(SIPARIS_DOSYASI, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
 
-def siparisleri_kaydet(veri): with open(SIPARIS_DOSYASI, "w", encoding="utf-8") as f: json.dump(veri, f, indent=2, ensure_ascii=False)
+def siparisleri_kaydet(veri):
+    with open(SIPARIS_DOSYASI, "w", encoding="utf-8") as f:
+        json.dump(veri, f, indent=2, ensure_ascii=False)
 
-def free_yetki(): tip = session.get("tip") return tip in ["vip", "free", "kurucu"]
+def free_yetki():
+    tip = session.get("tip")
+    return tip in ["vip", "free", "kurucu"]
 
-def vip_yetki(): tip = session.get("tip") return tip in ["vip", "kurucu"]
+def vip_yetki():
+    tip = session.get("tip")
+    return tip in ["vip", "kurucu"]
 
-def kurucu_yetki(): tip = session.get("tip") return tip == "kurucu"
+def kurucu_yetki():
+    tip = session.get("tip")
+    return tip == "kurucu"
 
-@app.route('/') def index(): if 'username' not in session: return redirect(url_for('giris')) return render_template('index.html', kullanici=session['username'], tip=session.get('tip', 'free'))
+@app.route('/')
+def index():
+    if 'username' not in session:
+        return redirect(url_for('giris'))
+    return render_template('index.html', kullanici=session['username'], tip=session.get('tip', 'free'))
 
-@app.route('/giris', methods=['GET', 'POST']) def giris(): if request.method == 'POST': kullanici = request.form['kullanici'] sifre = request.form['sifre'] veriler = kullanicilari_yukle() if kullanici in veriler and veriler[kullanici]['sifre'] == sifre: session['username'] = kullanici session['tip'] = veriler[kullanici].get('tip', 'free') return redirect(url_for('index')) else: return render_template('giris.html', hata="❌ Bilgiler yanlış") return render_template('giris.html')
+@app.route('/giris', methods=['GET', 'POST'])
+def giris():
+    if request.method == 'POST':
+        kullanici = request.form['kullanici']
+        sifre = request.form['sifre']
+        veriler = kullanicilari_yukle()
+        if kullanici in veriler and veriler[kullanici]['sifre'] == sifre:
+            session['username'] = kullanici
+            session['tip'] = veriler[kullanici].get('tip', 'free')
+            return redirect(url_for('index'))
+        else:
+            return render_template('giris.html', hata="❌ Bilgiler yanlış")
+    return render_template('giris.html')
 
-@app.route('/cikis') def cikis(): session.clear() return redirect(url_for('giris'))
+@app.route('/cikis')
+def cikis():
+    session.clear()
+    return redirect(url_for('giris'))
 
-@app.route('/takipci', methods=['GET', 'POST']) def instagram_takipci(): if not vip_yetki(): return redirect('/abonelik') mesaj = "" if request.method == "POST": hedef = request.form.get("hedef") islem = "Takipçi" siparisler = siparisleri_yukle() siparisler.append({ "kullanici": session["username"], "hedef": hedef, "islem": islem, "tarih": datetime.now().strftime("%d.%m.%Y %H:%M") }) siparisleri_kaydet(siparisler) mesaj = f"✅ {hedef} için {islem} siparişi alındı." return render_template("takipci.html", mesaj=mesaj)
+@app.route('/takipci', methods=['GET', 'POST'])
+def instagram_takipci():
+    if not vip_yetki():
+        return redirect('/abonelik')
+    mesaj = ""
+    if request.method == "POST":
+        hedef = request.form.get("hedef")
+        islem = "Takipçi"
+        siparisler = siparisleri_yukle()
+        siparisler.append({
+            "kullanici": session["username"],
+            "hedef": hedef,
+            "islem": islem,
+            "tarih": datetime.now().strftime("%d.%m.%Y %H:%M")
+        })
+        siparisleri_kaydet(siparisler)
+        mesaj = f"✅ {hedef} için {islem} siparişi alındı."
+    return render_template("takipci.html", mesaj=mesaj)
 
-@app.route('/begeni', methods=['GET', 'POST']) def instagram_begeni(): if not vip_yetki(): return redirect('/abonelik') mesaj = "" if request.method == "POST": hedef = request.form.get("hedef") islem = "Beğeni" siparisler = siparisleri_yukle() siparisler.append({ "kullanici": session["username"], "hedef": hedef, "islem": islem, "tarih": datetime.now().strftime("%d.%m.%Y %H:%M") }) siparisleri_kaydet(siparisler) mesaj = f"✅ {hedef} için {islem} siparişi alındı." return render_template("begeni.html", mesaj=mesaj)
+@app.route('/begeni', methods=['GET', 'POST'])
+def instagram_begeni():
+    if not vip_yetki():
+        return redirect('/abonelik')
+    mesaj = ""
+    if request.method == "POST":
+        hedef = request.form.get("hedef")
+        islem = "Beğeni"
+        siparisler = siparisleri_yukle()
+        siparisler.append({
+            "kullanici": session["username"],
+            "hedef": hedef,
+            "islem": islem,
+            "tarih": datetime.now().strftime("%d.%m.%Y %H:%M")
+        })
+        siparisleri_kaydet(siparisler)
+        mesaj = f"✅ {hedef} için {islem} siparişi alındı."
+    return render_template("begeni.html", mesaj=mesaj)
 
-@app.route('/izlenme', methods=['GET', 'POST']) def instagram_izlenme(): if not vip_yetki(): return redirect('/abonelik') mesaj = "" if request.method == "POST": hedef = request.form.get("hedef") islem = "İzlenme" siparisler = siparisleri_yukle() siparisler.append({ "kullanici": session["username"], "hedef": hedef, "islem": islem, "tarih": datetime.now().strftime("%d.%m.%Y %H:%M") }) siparisleri_kaydet(siparisler) mesaj = f"✅ {hedef} için {islem} siparişi alındı." return render_template("izlenme.html", mesaj=mesaj)
+@app.route('/izlenme', methods=['GET', 'POST'])
+def instagram_izlenme():
+    if not vip_yetki():
+        return redirect('/abonelik')
+    mesaj = ""
+    if request.method == "POST":
+        hedef = request.form.get("hedef")
+        islem = "İzlenme"
+        siparisler = siparisleri_yukle()
+        siparisler.append({
+            "kullanici": session["username"],
+            "hedef": hedef,
+            "islem": islem,
+            "tarih": datetime.now().strftime("%d.%m.%Y %H:%M")
+        })
+        siparisleri_kaydet(siparisler)
+        mesaj = f"✅ {hedef} için {islem} siparişi alındı."
+    return render_template("izlenme.html", mesaj=mesaj)
 
-@app.route('/siparisler') def siparisler(): if not kurucu_yetki(): return "🚫 Bu sayfaya erişim yetkiniz yok." siparisler = siparisleri_yukle() return render_template('siparisler.html', siparisler=siparisler)
-
-if name == 'main': app.run(host="0.0.0.0", port=5000, debug=True)
-
+@app.route('/siparisler')
+def siparisler():
+    if not kurucu_yetki():
+        return "🚫 Bu sayfaya erişim yetkiniz yok."
+    siparisler = siparisleri_yukle()
+    return render_template('siparisler.html', siparisler=siparisler)
 
 # --- Admin Panel ---
 @app.route('/admin')
