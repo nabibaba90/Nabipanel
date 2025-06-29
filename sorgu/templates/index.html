@@ -7,121 +7,131 @@
   <style>
     body {
       margin: 0;
-      padding: 0;
-      background: url('https://media.tenor.com/gUN6tKhiXQsAAAAd/futuristic-cyberpunk.gif') no-repeat center center fixed;
+      font-family: "Segoe UI", sans-serif;
+      background: url('https://media.tenor.com/UNm7LGG6xQoAAAAC/hacker-loop.gif') no-repeat center center fixed;
       background-size: cover;
-      font-family: 'Segoe UI', sans-serif;
       color: white;
     }
 
-    .container {
-      padding: 30px;
-      text-align: center;
-    }
-
-    .welcome {
-      font-size: 28px;
-      font-weight: bold;
-      text-shadow: 0 0 12px #00ffff;
-      margin-bottom: 10px;
-    }
-
-    .role-message {
-      font-size: 18px;
-      margin-bottom: 30px;
-      color: #00ffcc;
-    }
-
-    .menu-button {
+    .menu-icon {
       position: fixed;
-      top: 20px;
-      right: 20px;
-      font-size: 24px;
+      top: 15px;
+      right: 15px;
+      font-size: 30px;
       cursor: pointer;
-      z-index: 1000;
+      z-index: 1001;
     }
 
     .menu {
       position: fixed;
       top: 0;
-      left: -100%;
-      width: 300px;
+      right: -60%;
+      width: 60%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0,0,0,0.9);
+      color: white;
       padding: 20px;
+      transition: right 0.3s ease;
+      z-index: 1000;
       overflow-y: auto;
-      transition: 0.5s;
-      z-index: 999;
     }
 
     .menu.open {
-      left: 0;
+      right: 0;
+    }
+
+    .close-btn {
+      font-size: 25px;
+      float: right;
+      cursor: pointer;
     }
 
     .menu-section {
-      margin-bottom: 25px;
+      margin: 25px 0;
     }
 
     .menu-section-title {
+      font-size: 18px;
       font-weight: bold;
-      font-size: 20px;
-      color: #ffffff;
-      text-shadow: 0 0 10px #00ffff;
-      margin-bottom: 10px;
       cursor: pointer;
+      margin-bottom: 5px;
+    }
+
+    .submenu {
+      display: none;
+      margin-left: 10px;
     }
 
     .submenu a {
       display: block;
-      margin: 5px 0;
-      color: #ffffff;
-      font-weight: bold;
+      color: white;
       text-decoration: none;
-      text-shadow: 0 0 8px rgba(255,255,255,0.4);
-      transition: all 0.3s;
-    }
-
-    .submenu a:hover {
-      color: #00ffff;
-      text-shadow: 0 0 12px #00ffff;
+      margin: 6px 0;
+      font-weight: bold;
     }
 
     .badge {
-      padding: 3px 8px;
-      border-radius: 8px;
-      font-size: 12px;
-      margin-left: 10px;
+      padding: 3px 7px;
+      border-radius: 5px;
+      font-size: 11px;
+      margin-left: 5px;
+    }
+
+    .free {
+      background-color: #444;
+      color: #00f7ff;
+    }
+
+    .vip {
+      background-color: gold;
+      color: black;
+    }
+
+    .kurucu {
+      background-color: red;
+      color: white;
+    }
+
+    .welcome-box {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 20px 30px;
+      text-align: center;
+      color: white;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+      max-width: 90%;
+    }
+
+    .welcome-box h1 {
+      font-size: 22px;
+      margin-bottom: 10px;
+    }
+
+    .welcome-box .tip {
+      font-size: 16px;
+      margin-bottom: 8px;
       font-weight: bold;
     }
 
-    .badge.free {
-      background-color: rgba(0, 255, 128, 0.2);
-      border: 1px solid #00ff80;
-      color: #00ff80;
-      box-shadow: 0 0 5px #00ff80;
-    }
-
-    .badge.vip {
-      background-color: rgba(51, 204, 255, 0.2);
-      border: 1px solid #33ccff;
-      color: #33ccff;
-      box-shadow: 0 0 5px #33ccff;
-    }
-
-    .badge.kurucu {
-      background-color: rgba(255, 215, 0, 0.2);
-      border: 1px solid #ffd700;
-      color: #ffd700;
-      box-shadow: 0 0 8px #ffd700;
+    .welcome-box .mesaj {
+      font-size: 14px;
+      opacity: 0.8;
     }
   </style>
 </head>
 <body>
 
-<div class="menu-button" onclick="openMenu()">☰</div>
+<div class="menu-icon" onclick="openMenu()">☰</div>
 
 <div class="menu" id="menu">
-  <h3 style="text-align:center;">📂 Menü</h3>
+  <div class="close-btn" onclick="closeMenu()">❌</div>
+
+  <h3>📂 Menü</h3>
 
   <div class="menu-section">
     <div class="menu-section-title" onclick="toggleSubmenu('mernis')">📘 Mernis 2025</div>
@@ -136,20 +146,36 @@
   <div class="menu-section">
     <div class="menu-section-title" onclick="toggleSubmenu('gsm')">📱 GSM Sorguları</div>
     <div class="submenu" id="gsm">
-      <a href="{% if tip in ['vip', 'kurucu'] %}/tcgsm{% else %}/abonelik{% endif %}">GSM → TC <span class="badge vip">VIP</span></a>
-      <a href="{% if tip in ['vip', 'kurucu'] %}/tcgsm{% else %}/abonelik{% endif %}">TC → GSM <span class="badge vip">VIP</span></a>
-      <a href="{% if tip in ['vip', 'kurucu'] %}/aile{% else %}/abonelik{% endif %}">Sülale GSM <span class="badge vip">VIP</span></a>
-      <a href="{% if tip in ['vip', 'kurucu'] %}/call{% else %}/abonelik{% endif %}">Call <span class="badge vip">VIP</span></a>
-      <a href="{% if tip in ['vip', 'kurucu'] %}/smsbomber{% else %}/abonelik{% endif %}">SMS Bomber <span class="badge vip">VIP</span></a>
+      <a href="/tcgsm">GSM → TC <span class="badge vip">VIP</span></a>
+      <a href="/call">Call <span class="badge vip">VIP</span></a>
+      <a href="/smsbomber">SMS Bomber <span class="badge vip">VIP</span></a>
     </div>
   </div>
 
   <div class="menu-section">
     <div class="menu-section-title" onclick="toggleSubmenu('insta')">📸 Instagram</div>
     <div class="submenu" id="insta">
-      <a href="{% if tip in ['vip', 'kurucu'] %}/takipci{% else %}/abonelik{% endif %}">Takipçi <span class="badge vip">VIP</span></a>
-      <a href="{% if tip in ['vip', 'kurucu'] %}/begeni{% else %}/abonelik{% endif %}">Beğeni <span class="badge vip">VIP</span></a>
-      <a href="{% if tip in ['vip', 'kurucu'] %}/izlenme{% else %}/abonelik{% endif %}">İzlenme <span class="badge vip">VIP</span></a>
+      <a href="/takipci">Takipçi <span class="badge vip">VIP</span></a>
+      <a href="/begeni">Beğeni <span class="badge vip">VIP</span></a>
+      <a href="/izlenme">İzlenme <span class="badge vip">VIP</span></a>
+    </div>
+  </div>
+
+  <div class="menu-section">
+    <div class="menu-section-title" onclick="toggleSubmenu('ek')">🧩 Ek Araçlar</div>
+    <div class="submenu" id="ek">
+      <a href="/iban">IBAN <span class="badge vip">VIP</span></a>
+      <a href="/ip">IP Sorgu <span class="badge vip">VIP</span></a>
+      <a href="/burc">Burç <span class="badge vip">VIP</span></a>
+    </div>
+  </div>
+
+  <div class="menu-section">
+    <div class="menu-section-title" onclick="toggleSubmenu('ihbar')">🚨 İhbarlar</div>
+    <div class="submenu" id="ihbar">
+      <a href="/jandarma">Jandarma <span class="badge vip">VIP</span></a>
+      <a href="/egm">EGM <span class="badge vip">VIP</span></a>
+      <a href="/usom">USOM <span class="badge vip">VIP</span></a>
     </div>
   </div>
 
@@ -157,35 +183,41 @@
   <div class="menu-section">
     <div class="menu-section-title" onclick="toggleSubmenu('yonetim')">🛠 Yönetim</div>
     <div class="submenu" id="yonetim">
-      <a href="/admin">Admin Ayarları <span class="badge kurucu">👑</span></a>
-      <a href="/siparisler">Siparişler <span class="badge kurucu">👑</span></a>
+      <a href="/admin">Admin Ayarları</a>
+      <a href="/siparisler">Siparişler</a>
     </div>
   </div>
   {% endif %}
 
-  <a href="/cikis" style="display:block;margin-top:20px;color:#ff5555;font-weight:bold;">🚪 Çıkış</a>
+  <a href="/cikis">🚪 Çıkış</a>
 </div>
 
-<div class="container">
-  <div class="welcome">👋 Nebi'nin Mernis Paneline Hoş Geldin!</div>
-  {% if tip == 'free' %}
-  <div class="role-message">Kullanıcı Tipin: <span class="badge free">FREE</span> - Sınırlı erişimdesin, bazı özellikler kapalı.</div>
-  {% elif tip == 'vip' %}
-  <div class="role-message">Kullanıcı Tipin: <span class="badge vip">VIP</span> - Tüm premium özelliklere erişimin var.</div>
-  {% elif tip == 'kurucu' %}
-  <div class="role-message">Kullanıcı Tipin: <span class="badge kurucu">KURUCU 👑</span> - Tüm yetkiler sende reis!</div>
-  {% endif %}
+<div class="welcome-box">
+  <h1>🔐 Nebi’nin Mernis Paneline Hoş Geldin</h1>
+  <div class="tip">
+    {% if tip == "vip" %}<span class="badge vip">VIP Kullanıcı</span>
+    {% elif tip == "free" %}<span class="badge free">FREE Kullanıcı</span>
+    {% elif tip == "kurucu" %}<span class="badge kurucu">KURUCU</span>{% endif %}
+  </div>
+  <div class="mesaj">
+    {% if tip == "vip" %}Elit güce erişimin var, keyfini çıkar!
+    {% elif tip == "free" %}Yükselmek senin elinde! VIP ol, daha fazlasını aç!
+    {% elif tip == "kurucu" %}Komutan sen oldun! Tüm sistemi yönetiyorsun.{% endif %}
+  </div>
 </div>
 
 <script>
   function openMenu() {
     document.getElementById("menu").classList.add("open");
   }
+  function closeMenu() {
+    document.getElementById("menu").classList.remove("open");
+  }
   function toggleSubmenu(id) {
     const el = document.getElementById(id);
-    el.style.display = (el.style.display === 'block') ? 'none' : 'block';
+    el.style.display = el.style.display === "block" ? "none" : "block";
   }
 </script>
 
 </body>
-      </html>
+</html>
