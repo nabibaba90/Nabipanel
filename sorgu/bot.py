@@ -2,7 +2,7 @@ import asyncio
 from telethon import TelegramClient, events
 from telethon.sessions import StringSession
 
-api_id = 17570480
+api_id = 7637015444
 api_hash = '18c5be05094b146ef29b0cb6f6601f1f'
 string_session = "1ApWapzMBuxkq-wNsXTFVUnrBE2PYUbLujSuXjDUgV09wd8cDS8PUfkJgyBs_gcF0Wx_XbjbMKUEiXbSHdo-QyVY4sCjQjYlUXRSkup4uHC834L8VJcm1aYnny9kFwRMPDldKbvK9zxUVvmIgfDy3ZZcKz0oeXuAlLABwORG-ZBk_mLuokrTkg7OIIMVF9StytoFeFbvNVcI9OrWAPv2UCuy888JnR6OsAMPFfbNnQ7Dcqmv2sQjc0YaddRxnQoObwsT6Rv8Ubz1tz6KocpUlTTpYvb-YydybHmEGOEndwrJL8qB2Ky5xEvcTG65QQI0JNXan1m9xps2O2oEMXNRaSINdHy3KuPM="
 
