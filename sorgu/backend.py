@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request, session, redirect, url_for, jsonify
 import asyncio, threading, json, os
 from datetime import datetime
-import bot
+import bot  # bot.py içindeki çalışan TelegramClient ve loop zaten hazır
 
 app = Flask(__name__)
 app.secret_key = "gizli_key_2025"
-loop = asyncio.new_event_loop()
+loop = bot.loop  # Yeni oluşturma, bot.py'deki döngüyü kullan
 
 KULLANICI_DOSYASI = "sorgu/users.json"
 SIPARIS_DOSYASI = "siparisler.json"
