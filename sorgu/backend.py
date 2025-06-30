@@ -196,6 +196,22 @@ def admin_kullanici_tip_degistir():
     kullanicilari_kaydet(kullanicilar)
     return jsonify({"message": "Kullanıcı tipi güncellendi."})
 
+@app.route('/kayit', methods=['GET', 'POST'])
+def kayit():
+    if request.method == 'POST':
+        kullanici = request.form['kullanici']
+        sifre = request.form['sifre']
+        tip = 'free'  # Varsayılan kullanıcı tipi
+
+        veriler = kullanicilari_yukle()
+        if kullanici in veriler:
+            return render_template('kayit.html', hata="❌ Bu kullanıcı adı zaten kayıtlı.")
+        
+        veriler[kullanici] = {"sifre": sifre, "tip": tip}
+        kullanicilari_kaydet(veriler)
+        return redirect(url_for('giris'))
+
+    return render_template('kayit.html')
 # Diğer mevcut route'larınızı da aynen koruyabilirsiniz...
 
 @app.route("/adsoyad", methods=["GET", "POST"])
